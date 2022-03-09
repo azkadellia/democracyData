@@ -612,7 +612,7 @@ download_fh <- function(url,
   indicator <- value <- country <- NULL
 
   if(missing(url)) {
-    url <- "https://freedomhouse.org/sites/default/files/2021-02/Country_and_Territory_Ratings_and_Statuses_FIW1973-2021.xlsx"
+    url <- "https://freedomhouse.org/sites/default/files/2022-02/Country_and_Territory_Ratings_and_Statuses_FIW1973-2022.xlsx"
   }
 
 
@@ -754,6 +754,7 @@ download_fh_electoral <- function(url,
     url_2018 = "https://freedomhouse.org/sites/default/files/List%20of%20Electoral%20Democracies%20FIW%202018.xlsx"
     url_2019 = "https://freedomhouse.org/sites/default/files/List_of_Electoral_Democracies_FIW19.xls"
     url_2020 = "https://freedomhouse.org/sites/default/files/2020-02/2020_List_of_Electoral_Democracies_FIW_2020.xlsx"
+    url_2021 = "https://freedomhouse.org/sites/default/files/2022-03/List_of_Electoral_Democracies_FIW22.xlsx"
   }
 
   indicator <- value <- electoral_dem <- year <- NULL
@@ -761,6 +762,7 @@ download_fh_electoral <- function(url,
   `Electoral Democracy Status in FIW 2018` <- NULL
   `Electoral Democracy Status in FIW 2019` <- NULL
   `Electoral Democracy Designation in FIW 2020` <- NULL
+  `Electoral Democracy Designation in FIW 2021` <- NULL
 
 
   data <- read_data(url,
@@ -774,6 +776,7 @@ download_fh_electoral <- function(url,
   data_2018 <- read_data(url_2018, skip = 1)
   data_2019 <- read_data(url_2019, skip = 1)
   data_2020 <- read_data(url_2020, skip = 1)
+  data_2021 <- read_data(url_2021, skip = 1)
 
   if(return_raw) {
     if(verbose) {
@@ -784,7 +787,7 @@ download_fh_electoral <- function(url,
 
   if(verbose) {
     message(sprintf("Original dataset has %d rows, but is not in country-year format",
-                    nrow(data) + nrow(data_2018) + nrow(data_2019) + nrow(data_2020)))
+                    nrow(data) + nrow(data_2018) + nrow(data_2019) + nrow(data_2020) + nrow(data_2021)))
     message("Processing the FH Electoral Democracies 1989-2020 data - putting it in country-year format, adding state system info...")
   }
 
@@ -851,10 +854,25 @@ download_fh_electoral <- function(url,
                                                                    warn_missing = FALSE)) %>%
                                   select(-Country))
 
+  data_2021 <- suppressWarnings(data_2021 %>%
+                                  rename(electoral = `Electoral Democracy Designation in FIW 2021`) %>%
+                                  mutate(year = 2020,
+                                         electoral = ifelse(electoral == "Yes", TRUE, FALSE),
+                                         country = plyr::mapvalues(Country,
+                                                                   from= c("Yemen, S.",
+                                                                           "Vietnam, S.",
+                                                                           "Germany, E."),
+                                                                   to = c("South Yemen",
+                                                                          "South Vietnam",
+                                                                          "East Germany"),
+                                                                   warn_missing = FALSE)) %>%
+                                  select(-Country))
+  
   data <- bind_rows(data,
                     data_2018,
                     data_2019,
-                    data_2020)
+                    data_2020,
+                    data_2021)
 
   fh_electoral <- data %>%
     country_year_coder(country,
@@ -874,8 +892,8 @@ download_fh_electoral <- function(url,
    standardize_columns(fh_electoral, country, verbose = verbose)
 }
 
-#' Downloads the 2021 update of the Freedom House Freedom in the World All
-#' Data 2013-2021 file and processes it using [country_year_coder].
+#' Downloads the 2022 update of the Freedom House Freedom in the World All
+#' Data 2013-2022 file and processes it using [country_year_coder].
 #'
 #' The original data is available at
 #' [https://freedomhouse.org/report-types/freedom-world](https://freedomhouse.org/report/freedom-world)
@@ -1055,7 +1073,7 @@ download_fh_full <- function(url,
   status <- year <- country <- edition <- NULL
 
   if(missing(url)) {
-    url <- "https://freedomhouse.org/sites/default/files/2021-02/All_data_FIW_2013-2021.xlsx"
+    url <- "https://freedomhouse.org/sites/default/files/2022-02/All_data_FIW_2013-2022.xlsx"
   }
 
 
@@ -1075,7 +1093,7 @@ download_fh_full <- function(url,
   if(verbose) {
     message(sprintf("Original dataset has %d rows",
                     nrow(data)))
-    message("Processing the FH full 2013-2021 data - adding state system info, fixing column names...")
+    message("Processing the FH full 2013-2022 data - adding state system info, fixing column names...")
   }
 
   names(data) <- c("country", "region", "country_or_territory",
