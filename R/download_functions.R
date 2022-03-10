@@ -762,7 +762,7 @@ download_fh_electoral <- function(url,
   `Electoral Democracy Status in FIW 2018` <- NULL
   `Electoral Democracy Status in FIW 2019` <- NULL
   `Electoral Democracy Designation in FIW 2020` <- NULL
-  `Electoral Democracy Designation in FIW 2021` <- NULL
+  `Electoral Democracy Designation in FIW 2022` <- NULL
 
 
   data <- read_data(url,
@@ -855,7 +855,7 @@ download_fh_electoral <- function(url,
                                   select(-Country))
 
   data_2021 <- suppressWarnings(data_2021 %>%
-                                  rename(electoral = `Electoral Democracy Designation in FIW 2021`) %>%
+                                  rename(electoral = `Electoral Democracy Designation in FIW 2022`) %>%
                                   mutate(year = 2020,
                                          electoral = ifelse(electoral == "Yes", TRUE, FALSE),
                                          country = plyr::mapvalues(Country,
