@@ -612,7 +612,7 @@ download_fh <- function(url,
   indicator <- value <- country <- NULL
 
   if(missing(url)) {
-    url <- "https://freedomhouse.org/sites/default/files/2022-02/Country_and_Territory_Ratings_and_Statuses_FIW1973-2022.xlsx"
+    url <- "https://freedomhouse.org/sites/default/files/2022-02/Country_and_Territory_Ratings_and_Statuses_FIW_1973-2022.xlsx"
   }
 
 
